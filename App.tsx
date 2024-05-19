@@ -1,12 +1,11 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
 import type {PropsWithChildren} from 'react';
+import CategoriesScreen from './screens/CategoriesScreen';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import MealsOverViewScreen from './screens/MealsOverViewScreen';
+import MealDetailsScreen from './screens/MealDetailsScreen';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 import {
   SafeAreaView,
   ScrollView,
@@ -17,102 +16,73 @@ import {
   View,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+const DrawerNavigator = () => {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+    <Drawer.Navigator screenOptions={{
+      headerStyle: {backgroundColor: '#351401'},
+      headerTintColor: 'white',
+      sceneContainerStyle: {backgroundColor: '#3f2f25'},
+      drawerContentStyle:{backgroundColor:'#351401'},
+      drawerInactiveTintColor:'white',
+      drawerActiveTintColor:'#351401',
+      drawerActiveBackgroundColor:'#e4baa1'
+    }}>
+      <Drawer.Screen name="Categories" component={CategoriesScreen} />
+      {/* <Drawer.Screen name="Article" component={Article} /> */}
+    </Drawer.Navigator>
   );
-}
+};
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
+const App = () => {
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: {backgroundColor: '#351401'},
+          headerTintColor: 'white',
+          contentStyle: {backgroundColor: '#3f2f25'},
+        }}>
+        {/* here Nesting DrawerNavigator inside the Stack Navigator */}
+        <Stack.Screen
+          name="Home"
+          component={DrawerNavigator}
+          options={{
+            // it will not show the header of Stack navigator, because we are already showing the 
+            // header name by the help of drawer navigation
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="MealsOverViewScreen"
+          component={MealsOverViewScreen}
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+          //Instead of it I will render the title from inside the component
+          // options={({route,navigation}: { route: any ,navigation:any})=>{
+
+          //   const catId = route.params.categoryId;
+          //   return (
+
+          //     {
+          //     title:catId
+          //     }
+          //   )
+
+          // }}
+        ></Stack.Screen>
+        <Stack.Screen
+          name="MealDetailsScreen"
+          component={MealDetailsScreen}></Stack.Screen>
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+// const styles = StyleSheet.create({
+//   sectionContainer: {
+
+// });
 
 export default App;
