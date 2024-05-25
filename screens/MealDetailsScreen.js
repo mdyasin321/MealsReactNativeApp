@@ -1,34 +1,47 @@
 import {Text, View, StyleSheet, Image, ScrollView, Button} from 'react-native';
 import {MEALS} from '../data/dummy-data';
 import List from './components/List';
-import {useLayoutEffect} from 'react';
+import {useContext, useLayoutEffect, useEffect} from 'react';
+import {FavouritesContext} from './store/Favourites-context';
+import AddFavourite from './components/AddFavourite';
+
 const MealDetailsScreen = ({route, navigation}) => {
   const mealId = route.params.mealItemId;
+
+  const ctx = useContext(FavouritesContext);
+
+  const mealIsFavourite = ctx.ids.includes(mealId);
+  console.log('mealIsFavourite meal id ' + mealIsFavourite);
+
+  const changeFavouriteStatusHandler = () => {
+    if (mealIsFavourite === true) {
+      console.log('Inside if');
+      ctx.removeFavourite(mealId);
+    } else {
+      console.log('Inside else ');
+      ctx.addFavourite(mealId);
+    }
+  };
+  console.log('favourite meal id ' + ctx.ids);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => {
+        // return <Button title="Tap me" onPress={changeFavouriteStatusHandler} />;
+
+        return (
+          <AddFavourite
+            onClick={changeFavouriteStatusHandler}
+            color={mealIsFavourite ? 'red' : 'black'}
+          />
+        );
+      },
+    });
+  }, [navigation, changeFavouriteStatusHandler]);
 
   const meal = MEALS.find(element => {
     return element.id === mealId;
   });
-  //add useLayout effect
-
-  // not working some syntax error
-
-  // useLayoutEffect(() => {
-  //   navigation.setOptions(() => {
-  //     return ({
-  //       headerRight: () => {
-  //         return <Button title="Tap me" />;
-  //       },
-  //     });
-  //   });
-  // }, [navigation]);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => {
-        return <Button title="Tap me" />;
-      },
-    });
-  }, [navigation]);
 
   return (
     <View style={styles.rootContainer}>
